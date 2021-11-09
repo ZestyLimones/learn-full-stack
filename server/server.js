@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const db = require('./config/connection');
 const routes = require('./routes');
 const path = require('path');
 // const compression = require('compression');
@@ -14,13 +14,6 @@ app.use(express.json());
 
 // app.use(express.static('public'));
 
-// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/workout', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   useCreateIndex: true,
-//   useFindAndModify: false,
-// });
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
@@ -28,6 +21,8 @@ if (process.env.NODE_ENV === 'production') {
 // routes
 app.use(routes);
 
-app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}!`);
+db.once('open', () => {
+  app.listen(PORT, () => {
+    console.log(`App running on port ${PORT}!`);
+  });
 });
